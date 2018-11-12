@@ -24,15 +24,15 @@ module nibbler_testbench();
   logic clk, reset, fase,  notCarry, notZero;
   logic [3:0] salida_acumulador;
   logic [11:0] prog, carga;
-  logic [3:0] direccion;
+  logic [4:0] direccion;
 
   NIBBLER dut (clk, reset, salida_acumulador, reloj, fase, prog ,direccion, notCarry, notZero, carga);
 
   initial
     begin
       //Se configura el display y monitor para observar tiempo, reset, clk, j, k y q
-      $display("Tiempo\t\t\tsalida_acumulador \treloj \t\tfase \tincPC \tnotLoadPC \t\tinstruction \tdireccion_PC \tCarga");
-      $monitor("%d \t%b \t\t\t%b \t\t%b \t%b \t\t%b \t\t%b \t\t%b \t%b", $time, salida_acumulador, reloj, fase, notCarry, notZero, direccion, prog, carga);
+      $display("Tiempo\t\t\tsalida_acumulador \tnotCarry \tnotZero \tincPC \tnotLoadPC \t\tALU \tdireccion_PC \tCarga");
+      $monitor("%d \t%b \t\t\t%b \t\t%b \t\t%b \t\t%b \t\t%b \t\t%b \t%b", $time, salida_acumulador, notCarry, notZero, notCarry, notZero, direccion, prog, carga);
       //Se inicializan variables
       reset = 0;
       clk = 0;
@@ -46,7 +46,7 @@ module nibbler_testbench();
 
   initial
     begin
-      #150 $finish;
+      #200 $finish;
     end
 
   // señal de reloj
