@@ -20,10 +20,11 @@ module NIBBLER (input logic clk,
                 output logic [3:0] salida_acumulador,
                 output logic reloj,
                 output logic fase,
-                output logic [7:0] prog,
-                output logic [11:0] direccion,
+                output logic [11:0] prog,
+                output logic [3:0] direccion,
                 output logic notCarry,
-                output logic notZero
+                output logic notZero,
+                output logic [11:0] carga
                 );
 
   wire [11:0] address, loadAddress;
@@ -34,7 +35,7 @@ module NIBBLER (input logic clk,
   wire incPC, notLoadPC,notLoadA,notLoadFlags,notCarryIn, notCsRAM, phaseOut;
   wire notWeRAM, notOeALU, notOeIN, notOeOprnd, notLoadOut,  notZ, notC;
 
-  assign loadAddress = 0;
+
 
 
 
@@ -56,13 +57,16 @@ module NIBBLER (input logic clk,
 
   A acumulador(clk, reset, ALU_Result, A_Result);
 
+  assign loadAddress = {operand, programByte};
+  assign carga = loadAddress;
   assign salida_acumulador = ALU_Result;
   assign reloj = clk;
   assign fase = phaseOut;
-  assign direccion = address;
-  assign prog = programByte;
-  assign notCarry = notC;
-  assign notZero = notZ;
+  assign direccion = instruction;
+  assign prog = address;
+  assign notCarry = incPC;
+  assign notZero = notLoadPC;
+
 
 
 
