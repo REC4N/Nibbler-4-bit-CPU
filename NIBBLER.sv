@@ -17,6 +17,7 @@
 `include "RAM.sv"
 `include "BUS_DRIVER.sv"
 `include "IN.sv"
+`include "OUT.sv"
 
 module NIBBLER (input logic clk,
                 input logic reset,
@@ -40,6 +41,7 @@ module NIBBLER (input logic clk,
   wire incPC, notLoadPC,notLoadA,notLoadFlags,notCarryIn, or_notCsRAM, notCsRAM, phaseOut;
   wire notWeRAM, notOeALU, notOeIN, notOeOprnd, notLoadOut,  notZ, notC;
   logic enable_port_1, enable_port_2, enable_port_3;
+  logic enable_out_0, enable_out_1, enable_out_2;
 
 
 
@@ -74,13 +76,20 @@ module NIBBLER (input logic clk,
 
   IN entrada2 (.buttons(IN_2), .enable_port(enable_port_3), .data_bus(data_bus));
 
+  OUT salida0 (.clk(clk), .reset(reset), .enableOut(enable_out_0), .data_bus(data_bus), .data_out(OUT_0));
+
+  OUT salida1 (.clk(clk), .reset(reset), .enableOut(enable_out_1), .data_bus(data_bus), .data_out(OUT_1));
+
+  OUT salida2 (.clk(clk), .reset(reset), .enableOut(enable_out_2), .data_bus(data_bus), .data_out(OUT_2));
+
+
+
   assign {ALU_Result} = ALU_Result_with_carry;
   assign loadAddress = {operand, programByte};
   assign {A_Result} = A_Result_with_carry;
 
-
+// DECODER FOR IN PORTS
 always @ ( ~notOeIN or IN_0 or IN_1 or IN_2 or reset)
-
   begin
     enable_port_1 = 0; enable_port_2 = 0; enable_port_3 = 0;
     if (notOeIN == 0)
@@ -96,12 +105,31 @@ always @ ( ~notOeIN or IN_0 or IN_1 or IN_2 or reset)
       end
   end
 
+// DECODER FOR OUT PORTS
+always @ ( ~notLoadOut or OUT_0 or OUT_1 or OUT_2 or reset)
+  begin
+    enable_out_0 = 0; enable_out_1 = 0; enable_out_2 = 0;
+    if (notLoadOut == 0)
+      begin
+        begin
+          case (operand)
+          4'b0000: begin enable_out_0 = 1; enable_out_1 = 0; enable_out_2 = 0; end
+          4'b0001: begin enable_out_0 = 0; enable_out_1 = 1; enable_out_2 = 0; end
+          4'b0010: begin enable_out_0 = 0; enable_out_1 = 0; enable_out_2 = 1; end
+          default: begin enable_out_0 = 0; enable_out_1 = 0; enable_out_2 = 0; end
+          endcase
+        end
+      end
+  end
 
 
+
+
+
+
+
+// DATA IN AND OUT
   assign A = A_Result;
-  assign OUT_0 = enable_port_1;
-  assign OUT_1 = 4'b0;
-  ///assign OUT_2 = 4'b0;
   assign CARRY = ~notC;
   assign ZERO = ~notZ;
 
