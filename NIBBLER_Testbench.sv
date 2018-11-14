@@ -34,6 +34,9 @@ module nibbler_testbench();
       #1 reset = 1;
       #1 reset = 0;
 
+      #2 IN_0 = 4'b1100;
+      #20 IN_1 = 4'b0110;
+
     end
 
 
