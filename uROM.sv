@@ -127,21 +127,6 @@ module uROM(
           notLoadOut = 1;
         end
 
-      7'b0010_??1:   //CMPI
-        begin
-          incPC = 0;
-          notLoadPC = 1;
-          notLoadA = 1;
-          notLoadFlags = 0;
-          notCarryIn = 0;
-          S = 3'b001;
-          notCsRAM = 1;
-          notWeRAM = 1;
-          notOeALU = 1;
-          notOeIN = 1;
-          notOeOprnd = 0;
-          notLoadOut = 1;
-        end
 
       7'b0011_??1:   //CMPM
         begin

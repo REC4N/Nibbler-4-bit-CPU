@@ -6,33 +6,27 @@
 //     Description of file: Nibbler funcional Testbench
 //--------------------------------------------------------------------------------------------
 
-//OJO: ESTE ES EL CODIGO QUE SE DEBE DE COMPILAR. EL RESULTADO EN CONSOLA VA A HACER
-//EL RESULTADO DE LAS SIGUIENTES OPERACIONES (QUE ESTAN EN LA PROG MEMORY)
-//0100_0000	// LIT 0
-//0100_0100	// LIT 1
-//0100_0000	// LIT 0
-//0100_1111	// LIT 15
-//1110_1111	// NORI 15
-//1010_0001	// ADDI 1
-//0010_0001	// COMPI 1
-
 
 `include "NIBBLER.sv"
 
 module nibbler_testbench();
   //Se declaran salidas y entradas
-  logic clk, reset, fase,  notCarry, notZero;
-  logic [3:0] salida_acumulador;
-  logic [11:0] prog, carga;
-  logic [4:0] direccion;
+  logic clk, reset, CARRY, ZERO;
+  logic [3:0] IN_0, IN_1, IN_2, OUT_0, OUT_1, OUT_2, A;
 
-  NIBBLER dut (clk, reset, salida_acumulador, reloj, fase, prog ,direccion, notCarry, notZero, carga);
+
+  NIBBLER dut (.clk(clk), .reset(reset), .IN_0(IN_0), .IN_1(IN_1),
+              .IN_2(IN_2), .OUT_0(OUT_0), .OUT_1(OUT_1), .OUT_2(OUT_2),
+              .A(A), .CARRY(CARRY), .ZERO(ZERO));
 
   initial
     begin
       //Se configura el display y monitor para observar tiempo, reset, clk, j, k y q
-      $display("Tiempo\t\t\tsalida_acumulador \tnotCarry \tnotZero \tincPC \tnotLoadPC \t\tALU \tdireccion_PC \tCarga");
-      $monitor("%d \t%b \t\t\t%b \t\t%b \t\t%b \t\t%b \t\t%b \t\t%b \t%b", $time, salida_acumulador, notCarry, notZero, notCarry, notZero, direccion, prog, carga);
+      $display("TIME\t\t\tRESET \tCLOCK \tACUMULATOR \tZERO \tCARRY \tIN0 \tIN1 \tIN2 \tOUT0 \tOUT1 \tOUT2");
+
+      $monitor("%d \t%b \t%b \t%b \t\t%b \t%b \t%b \t%b \t%b \t%b \t%b \t%b", $time, reset, clk, A, ZERO, CARRY, IN_0, IN_1, IN_2, OUT_0, OUT_1, OUT_2);
+
+
       //Se inicializan variables
       reset = 0;
       clk = 0;
@@ -40,17 +34,23 @@ module nibbler_testbench();
       #1 reset = 1;
       #1 reset = 0;
 
-
     end
 
 
   initial
     begin
-      #200 $finish;
+      #600 $finish;
     end
 
   // señal de reloj
   always
     #5 clk = ~clk;
+
+
+    initial
+      begin
+        $dumpfile("dump.lxt2");
+        $dumpvars(1);
+      end
 
 endmodule
