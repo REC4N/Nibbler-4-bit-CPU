@@ -19,8 +19,8 @@ module FLAGS(input logic notC,
     begin
 
       if(reset)
-        flagsOut <= 2'b0;
-      else if (notLoadFlags)
+        flagsOut <= 2'b11;
+      else if (~notLoadFlags)
         flagsOut <= {notC,notZ};
       else
         flagsOut <= flagsOut;

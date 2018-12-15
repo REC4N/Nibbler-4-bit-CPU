@@ -35,7 +35,7 @@ module NIBBLER (input logic clk,
   wire [11:0] address, loadAddress;
   wire [7:0] programByte;
   wire [3:0] instruction, operand, ALU_Result, A_Result, data_bus;
-  wire [4:0] ALU_Result_with_carry, A_Result_with_carry;
+  wire [3:0] ALU_Result_without_carry;
   wire [2:0] S;
   wire [1:0] flagsOut;
   wire incPC, notLoadPC,notLoadA,notLoadFlags,notCarryIn, or_notCsRAM, notCsRAM, phaseOut;
@@ -60,15 +60,15 @@ module NIBBLER (input logic clk,
                   notLoadFlags, notCarryIn, S, notCsRAM, notWeRAM, notOeALU, notOeIN,
                   notOeOprnd, notLoadOut);
 
-  ALU alu (notCarryIn, S, A_Result_with_carry, data_bus, notC, notZ, ALU_Result_with_carry);
+  ALU alu (notCarryIn, S, A_Result, data_bus, notC, notZ, ALU_Result_without_carry);
 
-  A acumulator(clk, reset, notLoadA ,ALU_Result_with_carry, A_Result_with_carry);
+  A acumulator(clk, reset, notLoadA ,ALU_Result_without_carry, A_Result);
 
   RAM ram (.address_for_Ram(loadAddress), .notCsRAM(notCsRAM), .notWeRAM(notWeRAM), .data_bus(data_bus));
 
   BUS_DRIVER driver_for_operand (.a(operand), .enable(notOeOprnd), .y(data_bus));
 
-  BUS_DRIVER driver_for_alu (.a(ALU_Result), .enable(notOeALU), .y(data_bus));
+  BUS_DRIVER driver_for_alu (.a(ALU_Result_without_carry), .enable(notOeALU), .y(data_bus));
 
   IN entrada0 (.buttons(IN_0), .enable_port(enable_port_1), .data_bus(data_bus));
 
@@ -84,9 +84,9 @@ module NIBBLER (input logic clk,
 
 
 
-  assign {ALU_Result} = ALU_Result_with_carry;
+  //assign {ALU_Result} = ALU_Result_with_carry;
   assign loadAddress = {operand, programByte};
-  assign {A_Result} = A_Result_with_carry;
+  //assign {A_Result} = A_Result_with_carry;
 
 // DECODER FOR IN PORTS
 always @ ( ~notOeIN or IN_0 or IN_1 or IN_2 or reset)
@@ -130,8 +130,9 @@ always @ ( ~notLoadOut or OUT_0 or OUT_1 or OUT_2 or reset)
 
 // DATA IN AND OUT
   assign A = A_Result;
-  assign CARRY = ~notC;
-  assign ZERO = ~notZ;
+  assign CARRY = ~flagsOut[1];
+  assign ZERO = ~flagsOut[0];
+  assign contador = instruction;
 
 
 
