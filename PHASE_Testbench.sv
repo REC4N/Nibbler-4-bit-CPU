@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------------------------
 //     Author: Edgar Alejandro Recancoj Pajarez
 //     Proyect: Nibbler
-//     Module: Pahse Testbench
+//     Module: Phase Testbench
 //     Date: 8/11/2018
 //     Description of file: Phase for Nibbler Testbench
 //---------------------------------------------------------------------------------------------
